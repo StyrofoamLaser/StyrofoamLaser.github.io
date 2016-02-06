@@ -66,12 +66,12 @@
         <section id="main-content">
 		
 			<h3>
-<a id="ds_p1" class="anchor" href="#dev-blog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dan Shredder - Refactoring!</h3>
+<a id="ds_p1" class="anchor" href="#dev-blog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dan Shredder - 2/5/16 - Refactoring!</h3>
         
 <p>With our plan for the first few weeks set, this week was the time to start getting into the meat of the game's systems. Since our first order of business was transfer code over from blueprints to native C++, I spent much of my time this week implementing the Enemy class hierarchy. Using the designs we discussed last week, I built upon the Enemy base class and inherited from it in the MeleeEnemy and RangedEnemy. The goal with these new enemy classes is to create a C++ class with the backbone of Enemy functionality that can then be extended by a Blueprint. This will mean that a designer can simply create a subclass of MeleeEnemy or RangedEnemy and then override the various functions such as Attack() or Path() to behave however they want. Meanwhile, other members of the programming team are working on doing similar refactoring work in other areas of the game. The current plan is to be finished with the rework in time for QA testing on Monday February 8th. After that point my job will be to work directly with the designers as a gameplay programmer, with the first item on the agenda being an awesome boss fight!</p>
 		
           <h3>
-<a id="ds_p1" class="anchor" href="#dev-blog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dan Shredder - Diving Right In</h3>
+<a id="ds_p1" class="anchor" href="#dev-blog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dan Shredder - 1/29/16 - Diving Right In</h3>
         
 <p>This marks the first week of work for the second semester of Dan Shredder. The team has met a few times, made our plans and its time to finally get started with the code. I met with the other programmers and we started structuring the new architecture for the enemy classes. Kyle, our Lead Programmer, decided early on that our first priority should be transferring existing systems from blueprints to C++ code in order to improve framerates and efficiency. First on the list for this conversion were the enemies, as they currently have some of the most bloated blueprints. Here is our crude diagram of the new class structure:</p>
         
