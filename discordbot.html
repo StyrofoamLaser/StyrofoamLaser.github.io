@@ -86,28 +86,29 @@ to interact with the bot by issuing text commands. Then it can respond according
 playing audio to a voice channel, and pretty much whatever else your heart desires.</p>
 
 
-
+<!--
 <h3>Features</h3>
 
-<div class="features">
-<ol>
-    <li>Connects to and monitors activity in a given Discord server</li>
-    <li>Responds to text input through both explicit commands and specifically marked words</li>
-    <li>Joins voice channels and plays MP3 files over voice chat to other users</li>
-    <li>Can access a YouTube url to save a new song file to its library</li>
-    <li>Interfaces with Cleverbot to allow for dynamic conversation</li>
-</ol>
-</div>
+<p>
+	<ol>
+		<li>Connects to and monitors activity in a given Discord server</li>
+		<li>Responds to text input through both explicit commands and specifically marked words</li>
+		<li>Joins voice channels and plays MP3 files over voice chat to other users</li>
+		<li>Can access a YouTube url to save a new song file to its library</li>
+		<li>Interfaces with Cleverbot to allow for dynamic conversation</li>
+	</ol>
+</p>
 
 <h3>Programming Responsibilities</h3>
-
+<p>
     <ol>
         <li>Console Application written in C# and .NET</li>
         <li>Interfaces with DiscordSharp by Luigifan (https://github.com/Luigifan/DiscordSharp)</li>
         <li>Utilizes other GitHub based Libraries providing access to Youtube media streaming and Cleverbot functionality</li>
         <li>Heavily utilizes C# events and tasks</li>
     </ol>
-	
+</p>-->
+
 <h3>Post Mortem - Overview</h3>
 <p>So I've reached the end of development for my DiscordBot and it has been very fun and interesting ride. I spent a lot of my time getting used to using the various system in place for implementing external libraries in C#,
 and later on in Python (I'll talk more about that later). The project started off well enough; I decided that I was going to use C# and .NET and it seemed that the existing Discord.Net API was perfect for my needs. It was in-depth
@@ -126,15 +127,18 @@ to create something cool in an unfamiliar programming environment while utilizin
 <p>I thought it would be fun to check out some of the code that powers my DiscordBot, so let's take a look! Much of this Python version was adapted from a sample that the author of discord.py, Rapptz, created. I then expanded upon for extra functionality and usability. Given more time I would
 like to write more of the systems on my own as a learning experience, but I unfortunately had very little time to get the system working. First let's look at the "Bot" class that holds our discord.client as well as some variables for playing songs and talking to Cleverbot.</p>
 
-<code>class Bot(discord.Client):
-		def __init__(self):
-			super().__init__()
-			self.songs = asyncio.Queue()
-			self.play_next_song = asyncio.Event()
-			self.starter = None
-			self.player = None
-			self.current = None
-			self.cb = cleverbot.Cleverbot() </code>
+<h4>Bot Class Sample</h4>
+<pre><code>
+class Bot(discord.Client):
+	def __init__(self):
+		super().__init__()
+		self.songs = asyncio.Queue()
+		self.play_next_song = asyncio.Event()
+		self.starter = None
+		self.player = None
+		self.current = None
+		self.cb = cleverbot.Cleverbot() 
+</code></pre>
 
 <p>Here we declare a new class, Bot, and tell it to extend from discord.Client from the discord.py API. Then we define its __init__ function, which is essentially a constructor in Python. Next we declare a number of variables
 that will help us with playing songs in a voice channel to our pals. "self.songs" holds an asynchronous Queue of objects that we will store the currently queued songs in. "self.play_next_song" is an async event that we use to determine
@@ -142,11 +146,14 @@ whether we will be playing another song after this one is finished. "starter" is
 "cb" is our Cleverbot! The Cleverbot API is really intuitive and easy to use, as we simply declare the bot here in the constructor and then call "cb.ask(string)" later on to talk to it. Speaking of, let's look at our Cleverbot interaction
 as an example of how we handle text commands.</p>
 
-<code>async def on_message(self, message):
-		if message.content.startswith('!chat')
-			question = message.content[5:].strip()
-			response = self.cb.ask(question)
-			await self.send_message(message.channel, response)</code>
+<h4>on_message Event & Cleverbot Chat Interface Sample</h4>
+<pre><code>
+async def on_message(self, message):
+	if message.content.startswith('!chat')
+		question = message.content[5:].strip()
+		response = self.cb.ask(question)
+		await self.send_message(message.channel, response)
+</code></pre>
 
 <p>Here I am defining an event that discord.py calls when the bot receives a message. I then check if the message begins with a certain string, signifying that it is a valid command. In this case, "!chat" means that the user wants to talk to Cleverbot.
 So, we grab everything in the string except for the command at the beginning with the strip() method, and store it as "question". Getting a response is as simple as calling our Cleverbot's "ask" method with "self.cb.ask(question)".
