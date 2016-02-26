@@ -75,33 +75,91 @@
 
 <h3>
 <a id="discord-bot" class="anchor" href="#discord-bot" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DiscordBot</h3>
+<div><a href="https://github.com/StyrofoamLaser/StyroBotPy">StyroBotPy</a></div>
 
 <img src="images/discordlogo.jpg" alt="Discord Logo" style="width:384px;height:216px;">
 
-<p>DiscordBot is a personal project to create a bot which can sit in a Discord chat server and perform actions for the users. These include all sorts of things such as responding to commands, moderating chat, and even playing music for a voice channel. I created it using C# and .NET alongside a fantastic community written API for connecting to Discord called DiscordSharp. It's really cool! </p>
+<p>Recently, Hammer and Chisel Inc. created Discord, a gaming focused chat client meant to be an alternative to Skype or Teamspeak. It's a really awesome program,
+and my friends and I use it all the time. So when they published an article about the "Unofficial Official API", I was immediately intrigued. Here was an opportunity
+to work with some open source APIs written by the programming community and create a neat little application for a chat client I love. So I created my very own DiscordBot!
+Essentially this bot uses the DiscordSharp API to run a C# (originally, now Python) console application that joins and monitors a Discord Chat server. This allows users in the server
+to interact with the bot by issuing text commands. Then it can respond accordingly and do all sorts of super cool things like sending text messages, posting image files,
+playing audio to a voice channel, and pretty much whatever else your heart desires.</p>
 
 
-
+<!--
 <h3>Features</h3>
 
-<div class="features">
-<ul>
-    <li>Connects to and monitors activity in a given Discord server</li>
-    <li>Responds to text input through both explicit commands and specifically marked words</li>
-    <li>Joins voice channels and plays MP3 files over voice chat to other users</li>
-    <li>Can access a YouTube url to save a new song file to its library</li>
-    <li>Interfaces with Cleverbot to allow for dynamic conversation</li>
-</ul>
-</div>
+<p>
+	<ol>
+		<li>Connects to and monitors activity in a given Discord server</li>
+		<li>Responds to text input through both explicit commands and specifically marked words</li>
+		<li>Joins voice channels and plays MP3 files over voice chat to other users</li>
+		<li>Can access a YouTube url to save a new song file to its library</li>
+		<li>Interfaces with Cleverbot to allow for dynamic conversation</li>
+	</ol>
+</p>
 
 <h3>Programming Responsibilities</h3>
-
-    <ul>
+<p>
+    <ol>
         <li>Console Application written in C# and .NET</li>
         <li>Interfaces with DiscordSharp by Luigifan (https://github.com/Luigifan/DiscordSharp)</li>
         <li>Utilizes other GitHub based Libraries providing access to Youtube media streaming and Cleverbot functionality</li>
         <li>Heavily utilizes C# events and tasks</li>
-    </ul>
+    </ol>
+</p>-->
+
+<h3>Post Mortem - Overview</h3>
+<p>So I've reached the end of development for my DiscordBot and it has been very fun and interesting ride. I spent a lot of my time getting used to using the various system in place for implementing external libraries in C#,
+and later on in Python (I'll talk more about that later). The project started off well enough; I decided that I was going to use C# and .NET and it seemed that the existing Discord.Net API was perfect for my needs. It was in-depth
+but relatively user friendly and installing it worked out fine. Unfortunately after a little bit of development time I realized that the version I was working on did not properly support audio, and I ran into a number of bugs that interfered with my workflow.
+As a result, I decided to make the switch to a different API, DiscordSharp, which still operated in C# and .NET but came with an added bonus of an extremely user friendly syntax. Using DiscordSharp I developed the rest of the functionality for the original bot.
+I couldn't stay lucky for long, however, and demo syndrome reared its head, a little bit earlier than usual. I'm not sure what the root cause of this problem was, but as I tested the bot the night before I would stop development, I noticed that it could no longer connect.
+I received the following exception: </p>
+
+<code>Fatal|WebSocket.processException|System.NullReferenceException: Object reference not set to an instance of an object.</code>
+
+<p>After doing some Google-Fu along with some debugging through my own code, I found that the exception was happening outside my program, either in the DiscordSharp API or the WebSocketSharp API that it relies on. Being short on time with a totally broken product, I had to make a drastic decision.
+I needed to get the bot working again on a limited time budget, so I decided to translate it to Python, and utilize yet another community API, discord.py. I felt that this was an appropriate response, since it aligned well with the goal of the project, which was
+to create something cool in an unfamiliar programming environment while utilizing open source community APIs. Ultimately I was able to create a really cool little toy that my friends and I regularly mess around with while we chat after a hard day of work, and I'm really proud of it.</p>
+
+<h3>Post Mortem - Code Walkthrough</h3>
+<p>I thought it would be fun to check out some of the code that powers my DiscordBot, so let's take a look! Much of this Python version was adapted from a sample that the author of discord.py, Rapptz, created. I then expanded upon for extra functionality and usability. Given more time I would
+like to write more of the systems on my own as a learning experience, but I unfortunately had very little time to get the system working. First let's look at the "Bot" class that holds our discord.client as well as some variables for playing songs and talking to Cleverbot.</p>
+
+<h4>Bot Class Sample</h4>
+<pre><code>
+class Bot(discord.Client):
+	def __init__(self):
+		super().__init__()
+		self.songs = asyncio.Queue()
+		self.play_next_song = asyncio.Event()
+		self.starter = None
+		self.player = None
+		self.current = None
+		self.cb = cleverbot.Cleverbot() 
+</code></pre>
+
+<p>Here we declare a new class, Bot, and tell it to extend from discord.Client from the discord.py API. Then we define its __init__ function, which is essentially a constructor in Python. Next we declare a number of variables
+that will help us with playing songs in a voice channel to our pals. "self.songs" holds an asynchronous Queue of objects that we will store the currently queued songs in. "self.play_next_song" is an async event that we use to determine
+whether we will be playing another song after this one is finished. "starter" is the name of the user who played the current song, "player" is the audio player object that handles the actual playback, and "current" holds the current song file.
+"cb" is our Cleverbot! The Cleverbot API is really intuitive and easy to use, as we simply declare the bot here in the constructor and then call "cb.ask(string)" later on to talk to it. Speaking of, let's look at our Cleverbot interaction
+as an example of how we handle text commands.</p>
+
+<h4>on_message Event & Cleverbot Chat Interface Sample</h4>
+<pre><code>
+async def on_message(self, message):
+	if message.content.startswith('!chat')
+		question = message.content[5:].strip()
+		response = self.cb.ask(question)
+		await self.send_message(message.channel, response)
+</code></pre>
+
+<p>Here I am defining an event that discord.py calls when the bot receives a message. I then check if the message begins with a certain string, signifying that it is a valid command. In this case, "!chat" means that the user wants to talk to Cleverbot.
+So, we grab everything in the string except for the command at the beginning with the strip() method, and store it as "question". Getting a response is as simple as calling our Cleverbot's "ask" method with "self.cb.ask(question)".
+Finally, we "await" the predefined async method "send_message" and send the response back to the channel the user typed in to begin with. And that's pretty much how the bot works! All of it's functionality is tied to a command like this,
+although things like playing music to the channel is more complicated than interfacing with Cleverbot.</p>
 
         </section>
 
