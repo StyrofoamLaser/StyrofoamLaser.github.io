@@ -75,10 +75,55 @@
 
 <p>Tetrosity is a test project I created to familiarize myself with SpriteKit and Swift as well as the iOS development workflow. I followed a tutorial at <a href="https://www.bloc.io/swiftris-build-your-first-ios-game-with-swift">bloc.io</a> called "Swiftris" that walks through the steps of writing Tetris in Swift. Along the way I explored the ins and outs of Swift and SpriteKit, and added in a few extra bits of polish. This project was mostly a big learning process and a tool for figuring out how to develop for this platform. In the future I plan to use these skills to write a game of my own from scratch.</p>
 
-<h3>Features</h3>
-<ul>
-    <li>Written in Swift using SpriteKit</li>
-</ul>
+<h3>Post Mortem - Overview</h3>
+<p>Developing for iOS has been a very new experience for me. Even working with Android feels like a completely different world in terms of programming. This makes sense, since Android is Java based which I am already familiar, where as Swift is like a whole new planet. Strange as it might be, I found myself really enjoying my time with this project. Swift has a number of interesting features that make life a bit easier, and exploring a new language is always fun. The Swiftris tutorial was a fantastic learning tool for facilitating this exploration, and at the end of the process I had myself a working Tetris game and a working understanding of iOS programming. After taking the time to do this learning, I was left wanting more. I continued to explore aspects of SpriteKit and investigate sound, particle effects, image filters, and more. I was pleasantly surprised to see just how versatile the SpriteKit engine was, as it has systems in place for everything I could think of, making the process (for the most part) fairly smooth. There were certainly a number of bugs, and quite a few nights of confusion as things that seemed correctly implemented simply were not working. These growing pains passed eventually, however, and I learned a little bit about the little details in procedure that I would need to stick to. Let's take a look at a little bit of my Swift code!</p>
+
+<h4>Some Sample FX Code</h4>
+<pre><code>
+// Here is a look at playing some sound with SpriteKit
+class func PlayGameOverSound(scene: GameScene)
+{
+    // Use a built-in SKAction to load a sound file from Assets - in this case "gameover.mp3"
+    let sound = SKAction.playSoundFileNamed("Sounds/gameover.mp3", waitForCompletion: false);
+        
+    // Call our function to play the sound once loaded, passing the sound as an SKAction and the scene
+    PlaySound(sound, scene: scene);
+}
+
+class func PlaySound(sound:SKAction, scene:GameScene)
+{
+    // Simply ask the scene to run the sound action and play the sound!
+    scene.runAction(sound);
+}
+
+// This is an example of my CI Image Filter system which applies image effects to the whole screen
+class func SetFilterBloom(scene: GameScene)
+{
+    // Set our scene's active effect to a CIFilter of type CIBloom!
+    scene.currentEffect = CIFilter(name: "CIBloom", withInputParameters: ["inputRadius": 20.0, "inputIntensity":2.0]);
+        
+    // Set our "effect node", which is an object in the scene, to display the scene's active effect.
+    scene.effectNode!.filter = scene.currentEffect;
+}
+
+// An example of creating a Particle Effect
+class func SpawnExplosionParticle(pos: CGPoint) -> SKEmitterNode?
+{
+    // Load the particle effect from assets. Xcode has an awesome built in effect editor!
+    let particles = SKEmitterNode(fileNamed: "prt_Explosion")
+
+    // Set the position of the emitter to our pos argument.
+    particles!.position = pos;
+        
+    // Return the EmitterNode so that the class calling this function can do whatever they want with it.
+    return particles;
+}
+</code></pre>
+
+<h3>Post Mortem - What would I change?</h3>
+
+<p>My biggest issue with this project is, strangely, that Swiftris was simply too in depth and awesome of a tutorial. Now that the project is complete I find myself wishing I had written the code for the game mechanics myself, instead of having a tutorial hold my hand. I still feel that the project was worth my time, as I certainly learned quite a lot about iOS game development, which was my goal, but I now long for the challenge of writing a game myself. In fact, for my next project I intend to work with SpriteKit again to create a game of my own from scratch. With new skills under my belt, I feel confident that I can apply what I learned working on Tetrosity to an original project.</p>
+
 
         </section>
 
